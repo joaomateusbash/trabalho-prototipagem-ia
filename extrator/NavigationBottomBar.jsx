@@ -64,5 +64,3 @@ export const NavigationBottomBar = ({ activeTab, onNavigate }) => {
     </nav>
   );
 };
-
-export default NavigationBottomBar;

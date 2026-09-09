@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus Finance | Plataforma Open Finance</title>
+  
+  <!-- Fontes Google Modernas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Ícones Lucide -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-main: #0B0E17;
+      --bg-surface: #141A29;
+      --bg-surface-elevated: #1D253A;
+      --bg-card: rgba(26, 34, 53, 0.75);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(16, 185, 129, 0.4);
+      
+      --primary: #10B981;
+      --primary-hover: #059669;
+      --primary-glow: rgba(16, 185, 129, 0.25);
+      
+      --accent-blue: #3B82F6;
+      --accent-purple: #8B5CF6;
+      --accent-amber: #F59E0B;
+      --accent-rose: #F43F5E;
+      
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-subtle: #64748B;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(139, 92, 246, 0.06) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding-bottom: 95px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 720px;
+      padding: 0 16px;
+      margin: 0 auto;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      padding: 24px 0 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: rgba(11, 14, 23, 0.85);
+      backdrop-filter: blur(16px);
+      z-index: 50;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10B981, #3B82F6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+      position: relative;
+    }
+
+    .avatar-status {
+      width: 12px;
+      height: 12px;
+      background: #10B981;
+      border: 2px solid var(--bg-main);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+
+    .user-info h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .open-finance-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    /* ===== SEÇÕES & TRANSIÇÕES ===== */
+    .view-content {
+      display: none;
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .view-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== CARD CONSOLIDADO ===== */
+    .balance-card {
+      background: linear-gradient(135deg, rgba(20, 26, 41, 0.95), rgba(29, 37, 58, 0.85));
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      margin-bottom: 24px;
+    }
+
+    .balance-card::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .balance-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .balance-value {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .balance-growth {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      color: var(--text-main);
+      transform: translateY(-2px);
+    }
+
+    .action-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover .action-icon {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+
+    /* ===== SEÇÃO BANCOS CONECTADOS ===== */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-link {
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .banks-scroll {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 24px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--bg-surface-elevated) transparent;
+    }
+
+    .bank-card {
+      min-width: 170px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      flex-shrink: 0;
+      position: relative;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .bank-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .bank-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .bank-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    /* Cores dos bancos */
+    .bg-nubank { background: linear-gradient(135deg, #820AD1, #5B0792); }
+    .bg-itau { background: linear-gradient(135deg, #EC7000, #C25B00); }
+    .bg-bb { background: linear-gradient(135deg, #FBE400, #002D72); color: #002D72 !important; }
+    .bg-inter { background: linear-gradient(135deg, #FF7A00, #E06000); }
+    .bg-c6 { background: linear-gradient(135deg, #242424, #0a0a0a); border: 1px solid #444; }
+    .bg-bradesco { background: linear-gradient(135deg, #CC092F, #900621); }
+
+    .bank-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .bank-info {
+      font-size: 11px;
+      color: var(--text-subtle);
+      margin-bottom: 10px;
+    }
+
+    .bank-balance {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .bank-status {
+      font-size: 10px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-top: 6px;
+    }
+
+    .add-bank-card {
+      min-width: 140px;
+      background: rgba(20, 26, 41, 0.4);
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-bank-card:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    /* ===== ANÁLISE DE GASTOS ===== */
+    .insights-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .category-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .category-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: var(--bg-surface-elevated);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.8s ease-in-out;
+    }
+
+    /* ===== TRANSAÇÕES ===== */
+    .transactions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .transaction-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .transaction-item:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: var(--bg-surface-elevated);
+    }
+
+    .transaction-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .tx-icon-wrapper {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .tx-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+
+    .tx-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .bank-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+    }
+
+    .tx-amount {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .tx-amount.positive {
+      color: var(--primary);
+    }
+
+    .tx-amount.negative {
+      color: #fff;
+    }
+
+    /* ===== ABA BUSCAR / OPEN FINANCE HUB ===== */
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 16px 14px 44px;
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .search-icon-pos {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .institution-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .institution-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: var(--bg-surface-elevated);
+    }
+
+    .inst-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .inst-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .inst-type {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .btn-connect {
+      background: var(--primary);
+      color: #064E3B;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-connect:hover {
+      background: #34D399;
+      transform: translateY(-1px);
+    }
+
+    .btn-connected {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Consent Management */
+    .consent-card {
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .consent-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .consent-id {
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+    }
+
+    .consent-scopes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0;
+    }
+
+    .scope-tag {
+      background: var(--bg-surface-elevated);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    .btn-revoke {
+      background: rgba(244, 63, 94, 0.1);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--accent-rose);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-revoke:hover {
+      background: var(--accent-rose);
+      color: #fff;
+    }
+
+    /* ===== ABA NOTIFICAÇÕES ===== */
+    .notifications-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notification-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .notification-card.unread {
+      border-left: 3px solid var(--primary);
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.05), var(--bg-surface));
+    }
+
+    .notif-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--bg-surface-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .notif-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .notif-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+
+    .notif-time {
+      font-size: 11px;
+      color: var(--text-subtle);
+    }
+
+    /* ===== ABA PERFIL ===== */
+    .profile-hero {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-avatar-lg {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10B981, #3B82F6);
+      margin: 0 auto 12px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 8px 24px var(--primary-glow);
+    }
+
+    .profile-name {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .profile-cpf {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .security-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .feature-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .rate-comparison-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .rate-comparison-item:last-child {
+      border-bottom: none;
+    }
+
+    /* ===== MODAL DE CONSENTIMENTO OPEN FINANCE ===== */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 16px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      animation: modalFadeIn 0.25s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-box {
+      background: #141A29;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-title {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .consent-step-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 14px 0 8px 0;
+    }
+
+    .scope-checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scope-checkbox-label {
+      background: var(--bg-surface-elevated);
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .scope-checkbox-label:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .scope-checkbox-label input[type="checkbox"] {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    .consent-legal {
+      font-size: 11px;
+      color: var(--text-subtle);
+      line-height: 1.4;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      border-radius: var(--radius-sm);
+      margin: 16px 0;
+      border-left: 2px solid var(--primary);
+    }
+
+    .btn-submit-consent {
+      width: 100%;
+      background: var(--primary);
+      color: #064E3B;
+      border: none;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-submit-consent:hover {
+      background: #34D399;
+      box-shadow: 0 4px 18px var(--primary-glow);
+    }
+
+    /* Modal Pix */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    /* ===== BARRA DE NAVEGAÇÃO INFERIOR ===== */
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 72px;
+      background: rgba(14, 18, 29, 0.92);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      max-width: 720px;
+      margin: 0 auto;
+      z-index: 50;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-tab-btn {
+      background: none;
+      border: none;
+      color: var(--text-subtle);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 14px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .nav-tab-btn i, .nav-tab-btn svg {
+      width: 22px;
+      height: 22px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-tab-btn:hover {
+      color: var(--text-muted);
+    }
+
+    .nav-tab-btn.active {
+      color: var(--primary);
+    }
+
+    .nav-tab-btn.active svg {
+      transform: translateY(-2px);
+    }
+
+    .nav-indicator {
+      width: 4px;
+      height: 4px;
+      background: var(--primary);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 2px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .nav-tab-btn.active .nav-indicator {
+      opacity: 1;
+    }
+
+    /* ===== TOAST NOTIFICATIONS ===== */
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .toast {
+      background: #1E293B;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .toast.success { border-color: rgba(16, 185, 129, 0.4); }
+    .toast.error { border-color: rgba(244, 63, 94, 0.4); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="app-container">
+    <!-- CABEÇALHO -->
+    <header>
+      <div class="user-profile">
+        <div class="avatar">
+          JM
+          <div class="avatar-status"></div>
+        </div>
+        <div class="user-info">
+          <h3>João Mateus <i data-lucide="shield-check" style="width: 15px; height: 15px; color: var(--primary);"></i></h3>
+          <span class="open-finance-badge">
+            <i data-lucide="lock" style="width: 10px; height: 10px;"></i> Open Finance Ativo
+          </span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" onclick="toggleBalanceVisibility()" title="Ocultar/Exibir Valores">
+          <i data-lucide="eye" id="eye-icon"></i>
+        </button>
+        <button class="icon-btn" onclick="mudarAba('notificacoes')" title="Notificações">
+          <i data-lucide="bell"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
+
+      <!-- ==================== ABA 1: INÍCIO ==================== -->
+      <section id="view-inicio" class="view-content active">
+        
+        <!-- Card de Saldo Consolidado -->
+        <div class="balance-card">
+          <div class="balance-label">
+            <span>Patrimônio Consolidado (Todos os Bancos)</span>
+            <span class="open-finance-badge">
+              <i data-lucide="refresh-cw" style="width: 10px; height: 10px;"></i> Sincronizado
+            </span>
+          </div>
+
+          <div class="balance-value">
+            <span style="font-size: 20px; color: var(--text-muted); font-weight: 500;">R$</span>
+            <span id="total-balance-display">14.820,50</span>
+          </div>
+
+          <div class="balance-growth">
+            <i data-lucide="trending-up" style="width: 14px; height: 14px;"></i>
+            <span>+R$ 1.250,00 (+8,4%) este mês</span>
+          </div>
+
+          <!-- Ações Rápidas -->
+          <div class="quick-actions">
+            <button class="action-btn" onclick="abrirModalPix()">
+              <div class="action-icon"><i data-lucide="send"></i></div>
+              <span>Fazer Pix</span>
+            </button>
+            <button class="action-btn" onclick="mudarAba('buscar')">
+              <div class="action-icon"><i data-lucide="plus-circle"></i></div>
+              <span>Conectar</span>
+            </button>
+            <button class="action-btn" onclick="abrirComparador()">
+              <div class="action-icon"><i data-lucide="bar-chart-3"></i></div>
+              <span>Melhores Taxas</span>
+            </button>
+            <button class="action-btn" onclick="mudarAba('perfil')">
+              <div class="action-icon"><i data-lucide="shield"></i></div>
+              <span>LGPD & Dados</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Carrossel de Bancos Conectados -->
+        <div class="section-header">
+          <div class="section-title">
+            <i data-lucide="landmark" style="color: var(--primary); width: 18px; height: 18px;"></i>
+            Bancos Conectados (<span id="connected-count">3</span>)
+          </div>
+          <a class="section-link" onclick="mudarAba('buscar')">+ Gerenciar</a>
+        </div>
+
+        <div class="banks-scroll" id="connected-banks-list">
+          <!-- Renderizado via JavaScript -->
+        </div>
+
+        <!-- Análise de Gastos Unificada -->
+        <div class="insights-card">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i data-lucide="pie-chart" style="color: var(--accent-blue); width: 18px; height: 18px;"></i>
+            Visão de Gastos Unificada
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted);">Consolidação de faturas e saídas de todas as suas contas.</p>
+
+          <div class="category-bars">
+            <div class="category-item">
+              <div class="category-info">
+                <span>🏠 Moradia & Contas</span>
+                <strong style="color: #fff;">R$ 1.850,00 (45%)</strong>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: 45%; background: #3B82F6;"></div>
+              </div>
+            </div>
+
+            <div class="category-item">
+              <div class="category-info">
+                <span>🍔 Alimentação & Mercado</span>
+                <strong style="color: #fff;">R$ 1.120,00 (28%)</strong>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: 28%; background: #10B981;"></div>
+              </div>
+            </div>
+
+            <div class="category-item">
+              <div class="category-info">
+                <span>🚗 Transporte & Mobilidade</span>
+                <strong style="color: #fff;">R$ 490,00 (12%)</strong>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: 12%; background: #F59E0B;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Últimas Transações Consolidadas -->
+        <div class="section-header">
+          <div class="section-title">
+            <i data-lucide="history" style="color: var(--accent-purple); width: 18px; height: 18px;"></i>
+            Extrato Unificado (Multi-Banco)
+          </div>
+          <span style="font-size: 12px; color: var(--text-muted);">Tempo Real</span>
+        </div>
+
+        <div class="transactions-list" id="transactions-list">
+          <!-- Renderizado via JavaScript -->
+        </div>
+
+      </section>
+
+      <!-- ==================== ABA 2: BUSCAR & OPEN FINANCE HUB ==================== -->
+      <section id="view-buscar" class="view-content">
+        
+        <div class="section-header" style="margin-top: 6px;">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 800; color: #fff;">Open Finance Hub</h2>
+            <p style="font-size: 13px; color: var(--text-muted);">Conecte novas contas ou gerencie os consentimentos autorizados.</p>
+          </div>
+        </div>
+
+        <!-- Campo de Busca -->
+        <div class="search-box">
+          <i data-lucide="search" class="search-icon-pos" style="width: 18px; height: 18px;"></i>
+          <input type="text" class="search-input" id="search-input" placeholder="Buscar banco (Nubank, Itaú, BB...), transação ou chave..." oninput="filtrarCatalogo()">
+        </div>
+
+        <!-- Catálogo de Instituições -->
+        <div class="section-title" style="margin-bottom: 12px;">
+          <i data-lucide="plus-square" style="color: var(--primary); width: 18px; height: 18px;"></i>
+          Instituições Financeiras Participantes
+        </div>
+
+        <div class="catalog-grid" id="catalog-banks-list">
+          <!-- Renderizado dinamicamente -->
+        </div>
+
+        <!-- Gestão de Consentimentos Ativos -->
+        <div class="section-title" style="margin-bottom: 12px; margin-top: 24px;">
+          <i data-lucide="shield-alert" style="color: var(--accent-blue); width: 18px; height: 18px;"></i>
+          Consentimentos Ativos (Direito de Revogação LGPD)
+        </div>
+
+        <div id="active-consents-list">
+          <!-- Renderizado dinamicamente -->
+        </div>
+
+      </section>
+
+      <!-- ==================== ABA 3: NOTIFICAÇÕES ==================== -->
+      <section id="view-notificacoes" class="view-content">
+        
+        <div class="section-header" style="margin-top: 6px;">
+          <div>
+            <h2 style="font-size: 20px; font-weight: 800; color: #fff;">Central de Notificações</h2>
+            <p style="font-size: 13px; color: var(--text-muted);">Alertas de segurança, consentimentos e oportunidades do Open Finance.</p>
+          </div>
+        </div>
+
+        <div class="notifications-list" id="notifications-list">
+          <!-- Notificação 1 -->
+          <div class="notification-card unread">
+            <div class="notif-icon" style="background: rgba(16, 185, 129, 0.15); color: var(--primary);">
+              <i data-lucide="shield-check"></i>
+            </div>
+            <div>
+              <div class="notif-title">Consentimento Open Finance Renovado</div>
+              <div class="notif-body">O compartilhamento seguro de dados com o <strong>Nubank S.A.</strong> foi atualizado com sucesso por mais 12 meses.</div>
+              <div class="notif-time">Hoje às 14:32 • Segurança do Banco Central</div>
+            </div>
+          </div>
+
+          <!-- Notificação 2 -->
+          <div class="notification-card unread">
+            <div class="notif-icon" style="background: rgba(59, 130, 246, 0.15); color: var(--accent-blue);">
+              <i data-lucide="sparkles"></i>
+            </div>
+            <div>
+              <div class="notif-title">💡 Insight Open Finance: Oportunidade de CDB</div>
+              <div class="notif-body">Detectamos que seu saldo parado no Itaú poderia render <strong>R$ 145,00 a mais</strong> no CDB 102% do Banco Inter.</div>
+              <div class="notif-time">Ontem às 18:10 • Inteligência Nexus</div>
+            </div>
+          </div>
+
+          <!-- Notificação 3 -->
+          <div class="notification-card">
+            <div class="notif-icon" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-amber);">
+              <i data-lucide="arrow-down-left"></i>
+            </div>
+            <div>
+              <div class="notif-title">Pix Recebido no Banco do Brasil</div>
+              <div class="notif-body">Transferência de <strong>R$ 3.500,00</strong> recebida de Trabalho Escolar / Projeto.</div>
+              <div class="notif-time">02/09/2026 às 11:20</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== ABA 4: PERFIL & LGPD ==================== -->
+      <section id="view-perfil" class="view-content">
+        
+        <!-- Cartão do Usuário -->
+        <div class="profile-hero">
+          <div class="profile-avatar-lg">JM</div>
+          <h2 class="profile-name">João Mateus</h2>
+          <div class="profile-cpf">CPF: ***.482.910-** • Chave Pix Ativa</div>
+          <div class="security-badge">
+            <i data-lucide="check-circle" style="width: 14px; height: 14px;"></i>
+            Identidade Verificada no Open Finance Brasil
+          </div>
+        </div>
+
+        <!-- Comparador de Taxas / Portabilidade de Crédito -->
+        <div class="feature-card" id="card-comparador">
+          <div class="section-title" style="margin-bottom: 6px;">
+            <i data-lucide="percent" style="color: var(--accent-amber); width: 18px; height: 18px;"></i>
+            Comparador de Rendimentos & Crédito (Open Finance)
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+            Com seus dados compartilhados, as instituições competem para oferecer as melhores taxas para o seu perfil.
+          </p>
+
+          <div class="rate-comparison-item">
+            <div>
+              <div style="font-weight: 700; font-size: 14px;">Banco Inter</div>
+              <div style="font-size: 11px; color: var(--text-muted);">CDB Liquidez Diária</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="color: var(--primary); font-weight: 800; font-size: 14px;">102% do CDI</span>
+              <div style="font-size: 10px; color: var(--primary);">Recomendado</div>
+            </div>
+          </div>
+
+          <div class="rate-comparison-item">
+            <div>
+              <div style="font-weight: 700; font-size: 14px;">Nubank</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Caixinha Reserva</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="color: #fff; font-weight: 700; font-size: 14px;">100% do CDI</span>
+            </div>
+          </div>
+
+          <div class="rate-comparison-item">
+            <div>
+              <div style="font-weight: 700; font-size: 14px;">Itaú Unibanco</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Poupança Tradicional</div>
+            </div>
+            <div style="text-align: right;">
+              <span style="color: var(--text-muted); font-weight: 700; font-size: 14px;">6,17% a.a.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informações do Trabalho / Projeto Escolar -->
+        <div class="feature-card">
+          <div class="section-title" style="margin-bottom: 8px;">
+            <i data-lucide="book-open" style="color: var(--accent-purple); width: 18px; height: 18px;"></i>
+            Sobre o Open Finance (Trabalho Escolar)
+          </div>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px;">
+            O <strong>Open Finance</strong> é o sistema financeiro aberto regulamentado pelo <strong>Banco Central do Brasil</strong>. Ele permite que clientes compartilhem seus dados de histórico, saldos e investimentos entre diferentes bancos de forma 100% segura, promovendo mais competição, tarifas menores e produtos personalizados.
+          </p>
+          <button class="btn-connect" style="width: 100%; justify-content: center;" onclick="restaurarDadosIniciais()">
+            <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i> Restaurar Dados da Simulação
+          </button>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+      <button onclick="mudarAba('inicio')" class="nav-tab-btn active" id="btn-inicio">
+        <i data-lucide="home"></i>
+        <span>Início</span>
+        <div class="nav-indicator"></div>
+      </button>
+      <button onclick="mudarAba('buscar')" class="nav-tab-btn" id="btn-buscar">
+        <i data-lucide="search"></i>
+        <span>Buscar</span>
+        <div class="nav-indicator"></div>
+      </button>
+      <button onclick="mudarAba('notificacoes')" class="nav-tab-btn" id="btn-notificacoes">
+        <i data-lucide="bell"></i>
+        <span>Notificações</span>
+        <div class="nav-indicator"></div>
+      </button>
+      <button onclick="mudarAba('perfil')" class="nav-tab-btn" id="btn-perfil">
+        <i data-lucide="user"></i>
+        <span>Perfil</span>
+        <div class="nav-indicator"></div>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ==================== MODAL 1: FLUXO DE CONSENTIMENTO OPEN FINANCE ==================== -->
+  <div class="modal-backdrop" id="modal-consent">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i data-lucide="shield-check" style="color: var(--primary);"></i>
+          Autorização Open Finance
+        </div>
+        <button class="close-modal-btn" onclick="fecharModalConsent()">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 16px;">
+        <div id="modal-bank-logo" class="bank-logo bg-nubank" style="width: 48px; height: 48px; font-size: 18px; margin: 0 auto 8px auto;">NU</div>
+        <h3 id="modal-bank-name" style="font-size: 16px; font-weight: 700; color: #fff;">Conectar Nubank</h3>
+        <p style="font-size: 12px; color: var(--text-muted);">Você será redirecionado em ambiente criptografado.</p>
+      </div>
+
+      <div class="consent-step-title">1. Escolha os dados a serem compartilhados:</div>
+      <div class="scope-checkbox-list">
+        <label class="scope-checkbox-label">
+          <input type="checkbox" id="scope-cadastral" checked>
+          <span>Dados cadastrais (Nome, CPF, Contato)</span>
+        </label>
+        <label class="scope-checkbox-label">
+          <input type="checkbox" id="scope-balance" checked>
+          <span>Saldos de contas e poupança</span>
+        </label>
+        <label class="scope-checkbox-label">
+          <input type="checkbox" id="scope-transactions" checked>
+          <span>Extrato de transações (últimos 12 meses)</span>
+        </label>
+        <label class="scope-checkbox-label">
+          <input type="checkbox" id="scope-cards" checked>
+          <span>Faturas de cartões de crédito</span>
+        </label>
+      </div>
+
+      <div class="consent-step-title">2. Validade do consentimento:</div>
+      <select class="form-control" id="consent-duration">
+        <option value="12">12 meses (Recomendado pelo Banco Central)</option>
+        <option value="6">6 meses</option>
+        <option value="3">3 meses</option>
+      </select>
+
+      <div class="consent-legal">
+        <i data-lucide="lock" style="width: 12px; height: 12px; display: inline; vertical-align: middle;"></i>
+        Seus dados são protegidos pela <strong>LGPD</strong> e pela Resolução Conjunta nº 1 do Banco Central. Você pode revogar este consentimento a qualquer momento sem custo.
+      </div>
+
+      <button class="btn-submit-consent" onclick="confirmarConexaoBanco()">
+        <i data-lucide="check"></i> Autorizar e Sincronizar
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: SIMULAÇÃO DE PIX ==================== -->
+  <div class="modal-backdrop" id="modal-pix">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i data-lucide="send" style="color: var(--primary);"></i>
+          Enviar Pix Simulado
+        </div>
+        <button class="close-modal-btn" onclick="fecharModalPix()">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>Selecione o Banco de Origem:</label>
+        <select class="form-control" id="pix-source-bank">
+          <!-- Preenchido dinamicamente -->
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Chave Pix de Destino:</label>
+        <input type="text" class="form-control" id="pix-key" placeholder="CPF, E-mail, Celular ou Chave Aleatória" value="escola.apresentacao@projeto.edu.br">
+      </div>
+
+      <div class="form-group">
+        <label>Nome do Destinatário:</label>
+        <input type="text" class="form-control" id="pix-receiver" placeholder="Ex: Professor / Colega" value="Prof. Avaliador do Projeto">
+      </div>
+
+      <div class="form-group">
+        <label>Valor (R$):</label>
+        <input type="number" step="0.01" class="form-control" id="pix-amount" placeholder="0,00" value="50.00">
+      </div>
+
+      <button class="btn-submit-consent" onclick="executarPix()">
+        <i data-lucide="send"></i> Confirmar Transferência Pix
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT & LÓGICA OPEN FINANCE ==================== -->
+  <script>
+    // ESTADO DA APLICAÇÃO (Salvo no LocalStorage)
+    const BANCOS_INICIAIS = [
+      {
+        id: 'nubank',
+        name: 'Nubank',
+        code: '260',
+        agency: '0001',
+        account: '84920-1',
+        balance: 6240.50,
+        connected: true,
+        logoBg: 'bg-nubank',
+        logoText: 'NU',
+        consentDate: '01/09/2026',
+        expiresIn: '12 meses'
+      },
+      {
+        id: 'itau',
+        name: 'Itaú Unibanco',
+        code: '341',
+        agency: '1420',
+        account: '39482-9',
+        balance: 5180.00,
+        connected: true,
+        logoBg: 'bg-itau',
+        logoText: 'IT',
+        consentDate: '15/08/2026',
+        expiresIn: '12 meses'
+      },
+      {
+        id: 'inter',
+        name: 'Banco Inter',
+        code: '077',
+        agency: '0001',
+        account: '10928-4',
+        balance: 3400.00,
+        connected: true,
+        logoBg: 'bg-inter',
+        logoText: 'IN',
+        consentDate: '20/08/2026',
+        expiresIn: '6 meses'
+      },
+      {
+        id: 'bb',
+        name: 'Banco do Brasil',
+        code: '001',
+        agency: '3200',
+        account: '55120-0',
+        balance: 1850.00,
+        connected: false,
+        logoBg: 'bg-bb',
+        logoText: 'BB',
+        consentDate: null,
+        expiresIn: null
+      },
+      {
+        id: 'c6',
+        name: 'C6 Bank',
+        code: '336',
+        agency: '0001',
+        account: '77210-3',
+        balance: 2100.00,
+        connected: false,
+        logoBg: 'bg-c6',
+        logoText: 'C6',
+        consentDate: null,
+        expiresIn: null
+      },
+      {
+        id: 'bradesco',
+        name: 'Bradesco',
+        code: '237',
+        agency: '4500',
+        account: '89102-5',
+        balance: 4300.00,
+        connected: false,
+        logoBg: 'bg-bradesco',
+        logoText: 'BR',
+        consentDate: null,
+        expiresIn: null
+      }
+    ];
+
+    const TRANSACOES_INICIAIS = [
+      {
+        id: 1,
+        title: 'Supermercado Central',
+        bank: 'Nubank',
+        bankColor: '#820AD1',
+        date: 'Hoje, 16:45',
+        category: 'Alimentação',
+        icon: 'shopping-cart',
+        amount: -184.90,
+        type: 'negative'
+      },
+      {
+        id: 2,
+        title: 'Transferência Pix Recebida',
+        bank: 'Banco Inter',
+        bankColor: '#FF7A00',
+        date: 'Hoje, 11:20',
+        category: 'Renda',
+        icon: 'arrow-down-left',
+        amount: 850.00,
+        type: 'positive'
+      },
+      {
+        id: 3,
+        title: 'Posto Ipiranga Combustível',
+        bank: 'Itaú',
+        bankColor: '#EC7000',
+        date: 'Ontem, 19:30',
+        category: 'Transporte',
+        icon: 'fuel',
+        amount: -120.00,
+        type: 'negative'
+      },
+      {
+        id: 4,
+        title: 'Assinatura Spotify & Netflix',
+        bank: 'Nubank',
+        bankColor: '#820AD1',
+        date: '01/09/2026',
+        category: 'Lazer',
+        icon: 'tv',
+        amount: -55.90,
+        type: 'negative'
+      }
+    ];
+
+    let bancos = JSON.parse(localStorage.getItem('nexus_bancos')) || BANCOS_INICIAIS;
+    let transacoes = JSON.parse(localStorage.getItem('nexus_transacoes')) || TRANSACOES_INICIAIS;
+    let valoresVisiveis = true;
+    let bancoSelecionadoConexao = null;
+
+    // INICIALIZAÇÃO
+    window.addEventListener('DOMContentLoaded', () => {
+      // Verificar hash na URL (ex: #buscar)
+      const hash = window.location.hash.replace('#', '') || 'inicio';
+      mudarAba(hash);
+
+      renderizarTudo();
+      lucide.createIcons();
+    });
+
+    // SISTEMA DE ABAS E NAVEGAÇÃO
+    function mudarAba(abaId) {
+      const secoesValidas = ['inicio', 'buscar', 'notificacoes', 'perfil'];
+      if (!secoesValidas.includes(abaId)) abaId = 'inicio';
+
+      document.querySelectorAll('.view-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab-btn').forEach(el => el.classList.remove('active'));
+
+      const targetView = document.getElementById('view-' + abaId);
+      const targetBtn = document.getElementById('btn-' + abaId);
+
+      if (targetView) targetView.classList.add('active');
+      if (targetBtn) targetBtn.classList.add('active');
+
+      window.location.hash = abaId;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.replace('#', '') || 'inicio';
+      mudarAba(hash);
+    });
+
+    // RENDERIZAÇÃO GERAL
+    function renderizarTudo() {
+      salvarLocalStorage();
+      renderizarSaldoTotal();
+      renderizarBancosConectados();
+      renderizarTransacoes();
+      renderizarCatalogoBancos();
+      renderizarConsentimentosAtivos();
+      lucide.createIcons();
+    }
+
+    function salvarLocalStorage() {
+      localStorage.setItem('nexus_bancos', JSON.stringify(bancos));
+      localStorage.setItem('nexus_transacoes', JSON.stringify(transacoes));
+    }
+
+    // FORMATAÇÃO DE MOEDA
+    function formatarMoeda(valor) {
+      if (!valoresVisiveis) return '••••••';
+      return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // 1. SALDO TOTAL CONSOLIDADO
+    function renderizarSaldoTotal() {
+      const bancosConectados = bancos.filter(b => b.connected);
+      const total = bancosConectados.reduce((acc, b) => acc + b.balance, 0);
+      document.getElementById('total-balance-display').innerText = formatarMoeda(total);
+      document.getElementById('connected-count').innerText = bancosConectados.length;
+    }
+
+    // 2. CARROSSEL DE BANCOS
+    function renderizarBancosConectados() {
+      const container = document.getElementById('connected-banks-list');
+      const conectados = bancos.filter(b => b.connected);
+
+      let html = conectados.map(banco => `
+        <div class="bank-card" onclick="mudarAba('buscar')">
+          <div class="bank-card-header">
+            <div class="bank-logo ${banco.logoBg}">${banco.logoText}</div>
+            <i data-lucide="shield-check" style="width: 16px; height: 16px; color: var(--primary);"></i>
+          </div>
+          <div class="bank-name">${banco.name}</div>
+          <div class="bank-info">Ag ${banco.agency} • Cc ${banco.account}</div>
+          <div class="bank-balance">R$ ${formatarMoeda(banco.balance)}</div>
+          <div class="bank-status">
+            <i data-lucide="check" style="width: 12px; height: 12px;"></i> Sincronizado
+          </div>
+        </div>
+      `).join('');
+
+      html += `
+        <div class="add-bank-card" onclick="mudarAba('buscar')">
+          <i data-lucide="plus-circle" style="width: 28px; height: 28px;"></i>
+          <span style="font-size: 12px; font-weight: 600;">Adicionar Banco</span>
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    // 3. TRANSAÇÕES CONSOLIDADAS
+    function renderizarTransacoes(filtro = '') {
+      const container = document.getElementById('transactions-list');
+      let txs = transacoes;
+
+      if (filtro) {
+        txs = txs.filter(t => 
+          t.title.toLowerCase().includes(filtro.toLowerCase()) || 
+          t.bank.toLowerCase().includes(filtro.toLowerCase()) ||
+          t.category.toLowerCase().includes(filtro.toLowerCase())
+        );
+      }
+
+      if (txs.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">
+            Nenhuma transação encontrada.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = txs.map(tx => `
+        <div class="transaction-item">
+          <div class="transaction-left">
+            <div class="tx-icon-wrapper" style="background: rgba(255,255,255,0.06); color: ${tx.amount > 0 ? 'var(--primary)' : 'var(--text-main)'};">
+              <i data-lucide="${tx.icon}"></i>
+            </div>
+            <div>
+              <div class="tx-title">${tx.title}</div>
+              <div class="tx-meta">
+                <span class="bank-pill" style="border-left: 2px solid ${tx.bankColor};">${tx.bank}</span>
+                <span>• ${tx.date}</span>
+                <span>• ${tx.category}</span>
+              </div>
+            </div>
+          </div>
+          <div class="tx-amount ${tx.amount > 0 ? 'positive' : 'negative'}">
+            ${tx.amount > 0 ? '+' : ''}R$ ${formatarMoeda(Math.abs(tx.amount))}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 4. CATÁLOGO DE BANCOS (HUB)
+    function renderizarCatalogoBancos(filtro = '') {
+      const container = document.getElementById('catalog-banks-list');
+      let lista = bancos;
+
+      if (filtro) {
+        lista = lista.filter(b => b.name.toLowerCase().includes(filtro.toLowerCase()));
+      }
+
+      container.innerHTML = lista.map(banco => `
+        <div class="institution-card">
+          <div class="inst-left">
+            <div class="bank-logo ${banco.logoBg}">${banco.logoText}</div>
+            <div>
+              <div class="inst-name">${banco.name}</div>
+              <div class="inst-type">Cód. ${banco.code} • Homologado Banco Central</div>
+            </div>
+          </div>
+          <div>
+            ${banco.connected 
+              ? `<div class="btn-connected"><i data-lucide="check-circle" style="width: 14px; height: 14px;"></i> Conectado</div>` 
+              : `<button class="btn-connect" onclick="abrirModalConsent('${banco.id}')"><i data-lucide="link"></i> Conectar</button>`
+            }
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 5. CONSENTIMENTOS ATIVOS
+    function renderizarConsentimentosAtivos() {
+      const container = document.getElementById('active-consents-list');
+      const conectados = bancos.filter(b => b.connected);
+
+      if (conectados.length === 0) {
+        container.innerHTML = `
+          <div style="background: var(--bg-surface); padding: 20px; border-radius: var(--radius-lg); text-align: center; color: var(--text-muted); font-size: 13px;">
+            Nenhum banco conectado no momento. Conecte uma instituição acima.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = conectados.map(banco => `
+        <div class="consent-card">
+          <div class="consent-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="bank-logo ${banco.logoBg}" style="width: 24px; height: 24px; font-size: 10px;">${banco.logoText}</div>
+              <strong style="font-size: 14px; color: #fff;">${banco.name}</strong>
+            </div>
+            <button class="btn-revoke" onclick="revogarConsentimento('${banco.id}')">Revogar Acesso</button>
+          </div>
+          <div class="consent-id">ID: urn:bcb:of:consent-${banco.id}-9841</div>
+          <div class="consent-scopes">
+            <span class="scope-tag">✓ Dados Cadastrais</span>
+            <span class="scope-tag">✓ Saldos em Tempo Real</span>
+            <span class="scope-tag">✓ Extrato de Transações</span>
+          </div>
+          <div style="font-size: 11px; color: var(--text-subtle); display: flex; justify-content: space-between; margin-top: 6px;">
+            <span>Autorizado em: ${banco.consentDate || 'Recente'}</span>
+            <span>Validade: ${banco.expiresIn || '12 meses'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // BUSCA GLOBAL
+    function filtrarCatalogo() {
+      const query = document.getElementById('search-input').value;
+      renderizarCatalogoBancos(query);
+      renderizarTransacoes(query);
+      lucide.createIcons();
+    }
+
+    // MODAL DE CONSENTIMENTO
+    function abrirModalConsent(bancoId) {
+      const banco = bancos.find(b => b.id === bancoId);
+      if (!banco) return;
+
+      bancoSelecionadoConexao = banco;
+      document.getElementById('modal-bank-name').innerText = 'Conectar ' + banco.name;
+      
+      const logoEl = document.getElementById('modal-bank-logo');
+      logoEl.className = 'bank-logo ' + banco.logoBg;
+      logoEl.innerText = banco.logoText;
+
+      document.getElementById('modal-consent').classList.add('active');
+    }
+
+    function fecharModalConsent() {
+      document.getElementById('modal-consent').classList.remove('active');
+      bancoSelecionadoConexao = null;
+    }
+
+    function confirmarConexaoBanco() {
+      if (!bancoSelecionadoConexao) return;
+
+      const duracao = document.getElementById('consent-duration').value;
+      const dataHoje = new Date().toLocaleDateString('pt-BR');
+
+      bancoSelecionadoConexao.connected = true;
+      bancoSelecionadoConexao.consentDate = dataHoje;
+      bancoSelecionadoConexao.expiresIn = duracao + ' meses';
+
+      fecharModalConsent();
+      renderizarTudo();
+
+      mostrarToast(`✅ ${bancoSelecionadoConexao.name} conectado com sucesso via Open Finance!`, 'success');
+    }
+
+    // REVOGAÇÃO DE CONSENTIMENTO (LGPD)
+    function revogarConsentimento(bancoId) {
+      const banco = bancos.find(b => b.id === bancoId);
+      if (!banco) return;
+
+      if (confirm(`Deseja realmente revogar o compartilhamento de dados com o ${banco.name}? Conforme as normas do Banco Central, a sincronização será encerrada imediatamente.`)) {
+        banco.connected = false;
+        renderizarTudo();
+        mostrarToast(`🔒 Acesso do ${banco.name} revogado com sucesso.`, 'error');
+      }
+    }
+
+    // MODAL PIX
+    function abrirModalPix() {
+      const select = document.getElementById('pix-source-bank');
+      const conectados = bancos.filter(b => b.connected && b.balance > 0);
+
+      if (conectados.length === 0) {
+        mostrarToast('Você não tem nenhum banco conectado com saldo.', 'error');
+        return;
+      }
+
+      select.innerHTML = conectados.map(b => `
+        <option value="${b.id}">${b.name} (Saldo: R$ ${formatarMoeda(b.balance)})</option>
+      `).join('');
+
+      document.getElementById('modal-pix').classList.add('active');
+    }
+
+    function fecharModalPix() {
+      document.getElementById('modal-pix').classList.remove('active');
+    }
+
+    function executarPix() {
+      const bancoId = document.getElementById('pix-source-bank').value;
+      const receiver = document.getElementById('pix-receiver').value || 'Destinatário Pix';
+      const amount = parseFloat(document.getElementById('pix-amount').value);
+
+      if (!amount || amount <= 0) {
+        mostrarToast('Por favor, informe um valor válido.', 'error');
+        return;
+      }
+
+      const banco = bancos.find(b => b.id === bancoId);
+      if (!banco) return;
+
+      if (banco.balance < amount) {
+        mostrarToast(`Saldo insuficiente no ${banco.name}.`, 'error');
+        return;
+      }
+
+      // Descontar saldo
+      banco.balance -= amount;
+
+      // Registrar nova transação
+      const novaTx = {
+        id: Date.now(),
+        title: 'Pix para ' + receiver,
+        bank: banco.name,
+        bankColor: '#10B981',
+        date: 'Hoje, ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        category: 'Transferência Pix',
+        icon: 'send',
+        amount: -amount,
+        type: 'negative'
+      };
+
+      transacoes.unshift(novaTx);
+
+      fecharModalPix();
+      renderizarTudo();
+      mostrarToast(`💸 Pix de R$ ${formatarMoeda(amount)} enviado via ${banco.name}!`, 'success');
+    }
+
+    // OCULTAR/EXIBIR VALORES
+    function toggleBalanceVisibility() {
+      valoresVisiveis = !valoresVisiveis;
+      const eyeIcon = document.getElementById('eye-icon');
+      if (valoresVisiveis) {
+        eyeIcon.setAttribute('data-lucide', 'eye');
+      } else {
+        eyeIcon.setAttribute('data-lucide', 'eye-off');
+      }
+      renderizarTudo();
+    }
+
+    // COMPARADOR DE TAXAS
+    function abrirComparador() {
+      mudarAba('perfil');
+      setTimeout(() => {
+        const el = document.getElementById('card-comparador');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 200);
+    }
+
+    // RESTAURAR SIMULAÇÃO
+    function restaurarDadosIniciais() {
+      localStorage.removeItem('nexus_bancos');
+      localStorage.removeItem('nexus_transacoes');
+      bancos = JSON.parse(JSON.stringify(BANCOS_INICIAIS));
+      transacoes = JSON.parse(JSON.stringify(TRANSACOES_INICIAIS));
+      renderizarTudo();
+      mostrarToast('🔄 Dados da simulação restaurados com sucesso!', 'success');
+    }
+
+    // TOAST NOTIFICATIONS
+    function mostrarToast(mensagem, tipo = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${tipo}`;
+      toast.innerHTML = `
+        <i data-lucide="${tipo === 'success' ? 'check-circle' : 'alert-circle'}" style="width: 18px; height: 18px; color: ${tipo === 'success' ? 'var(--primary)' : 'var(--accent-rose)'};"></i>
+        <span>${mensagem}</span>
+      `;
+      container.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
